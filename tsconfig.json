@@ -21,6 +21,5 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src", "vibesrc"],
-  "exclude": ["vibesrc/game_theory_trail.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
