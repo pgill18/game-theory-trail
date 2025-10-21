@@ -35,8 +35,8 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({
             onChange={(e) => onSetPlatformCount(Number(e.target.value))}
             className="bg-white/5 text-white font-bold px-3 py-1 rounded-lg border-2 border-white/20 hover:border-white/40 transition-all cursor-pointer mx-1"
           >
-            <option value={10}>10</option>
-            <option value={15}>15</option>
+            <option value={13}>13</option>
+            <option value={14}>14</option>
             <option value={20}>20</option>
             <option value={25}>25</option>
           </select>{' '}

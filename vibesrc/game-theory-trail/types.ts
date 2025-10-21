@@ -26,19 +26,22 @@ export interface NPCRoundHistory {
   npc2: Move;
 }
 
-// Strategy definition
+// Strategy definition - Axelrod's First Tournament (1980)
 export type StrategyKey =
-  | 'random'
-  | 'alwaysCooperate'
-  | 'alwaysDefect'
   | 'titForTat'
-  | 'titForTwoTats'
-  | 'generousTFT'
+  | 'tidemanAndChieruzzi'
+  | 'nydegger'
+  | 'grofman'
+  | 'shubik'
+  | 'steinAndRapoport'
   | 'grudger'
-  | 'suspicious'
-  | 'pavlov'
-  | 'majority'
-  | 'adaptive';
+  | 'davis'
+  | 'graaskamp'
+  | 'downing'
+  | 'feld'
+  | 'joss'
+  | 'tullock'
+  | 'random';
 
 export interface Strategy {
   name: string;

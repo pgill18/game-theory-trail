@@ -19,7 +19,7 @@ import {
 const initialState: GameState = {
   phase: 'setup',
   playerStrategy: null,
-  platformCount: 10,
+  platformCount: 13,
   platforms: [],
   scorecard: [],
   totalScore: 0,
