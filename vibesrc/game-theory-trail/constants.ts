@@ -1,7 +1,7 @@
 import { PayoffMatrix, StrategyMap, RoundHistory } from './types';
 
 // Version tracking
-export const VERSION = '2.0.1';
+export const VERSION = '2.0.2';
 
 // Game configuration
 export const MAX_ROUNDS = 10;
@@ -91,6 +91,19 @@ export const STRATEGIES: StrategyMap = {
       const cooperations = opponentMoves.filter((m) => m === 'C').length;
       const defections = opponentMoves.filter((m) => m === 'D').length;
       return cooperations >= defections ? 'C' : 'D';
+    },
+  },
+  adaptive: {
+    name: 'Adaptive',
+    icon: '🧠',
+    getMove: (history: RoundHistory[]) => {
+      // Cooperate for first 5 rounds to learn opponent's behavior
+      if (history.length < 5) return 'C';
+      // Then play opponent's most common move
+      const opponentMoves = history.map((m) => m.opponent);
+      const cooperations = opponentMoves.filter((m) => m === 'C').length;
+      const defections = opponentMoves.filter((m) => m === 'D').length;
+      return cooperations > defections ? 'C' : 'D';
     },
   },
 };

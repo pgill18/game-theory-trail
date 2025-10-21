@@ -37,7 +37,8 @@ export type StrategyKey =
   | 'grudger'
   | 'suspicious'
   | 'pavlov'
-  | 'majority';
+  | 'majority'
+  | 'adaptive';
 
 export interface Strategy {
   name: string;
