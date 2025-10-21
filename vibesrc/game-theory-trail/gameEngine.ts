@@ -69,8 +69,13 @@ export function simulateGame(
   const opponentStrat = STRATEGIES[opponentStrategy];
 
   for (let i = 0; i < MAX_ROUNDS; i++) {
+    // Get player's move from player's perspective
     const playerMove = playerStrat.getMove(history);
-    const opponentMove = opponentStrat.getMove(history);
+
+    // Get opponent's move from opponent's perspective (flip history)
+    const opponentMove = opponentStrat.getMove(
+      history.map(h => ({ player: h.opponent, opponent: h.player }))
+    );
 
     const payoff = getPayoff(playerMove, opponentMove);
     playerScore += payoff.player;

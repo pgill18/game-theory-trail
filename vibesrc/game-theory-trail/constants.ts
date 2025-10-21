@@ -1,7 +1,7 @@
 import { PayoffMatrix, StrategyMap, RoundHistory } from './types';
 
 // Version tracking - Axelrod's First Tournament Edition
-export const VERSION = '3.0.1';
+export const VERSION = '3.1.0';
 
 // Game configuration - matching Axelrod's original tournament
 export const MAX_ROUNDS = 200;
@@ -67,22 +67,25 @@ export const STRATEGIES: StrategyMap = {
     name: 'Nydegger',
     icon: '🔢',
     getMove: (history: RoundHistory[]) => {
+      // Round 1: Cooperate
       if (history.length === 0) return 'C';
-      if (history.length === 1) {
-        // If only one cooperated on first move and only one defected on second, defect on third
-        return history[0].player === 'C' && history[0].opponent === 'D' ? 'D' : history[0].opponent;
-      }
-      if (history.length === 2) {
-        const first = history[0];
-        const second = history[1];
-        if (first.player === 'C' && first.opponent === 'D' &&
-            second.player === 'D' && second.opponent === 'C') {
-          return 'D';
+
+      // Rounds 2-3: Play Tit for Tat with one exception
+      if (history.length < 3) {
+        // Exception: If round 1 was (C,D) and round 2 was (D,C), defect on round 3
+        if (history.length === 2) {
+          const first = history[0];
+          const second = history[1];
+          if (first.player === 'C' && first.opponent === 'D' &&
+              second.player === 'D' && second.opponent === 'C') {
+            return 'D';
+          }
         }
-        return second.opponent;
+        // Otherwise TFT: copy opponent's last move
+        return history[history.length - 1].opponent;
       }
 
-      // Use Nydegger formula for last 3 moves
+      // After round 3: Use Nydegger formula on last 3 moves
       const last3 = history.slice(-3);
       let A = 0;
       const weights = [16, 4, 1];
@@ -203,20 +206,11 @@ export const STRATEGIES: StrategyMap = {
     name: 'Davis',
     icon: '🎓',
     getMove: (history: RoundHistory[]) => {
-      if (history.length === 0) return 'C';
-
       // Cooperate for first 10 moves
       if (history.length < 10) return 'C';
 
-      // Then play based on opponent's pattern
-      const last10 = history.slice(-10);
-      const opponentDefections = last10.filter(h => h.opponent === 'D').length;
-
-      // If opponent defected more than 5 times in last 10, defect
-      if (opponentDefections > 5) return 'D';
-
-      // Otherwise cooperate
-      return 'C';
+      // After round 10, play Grudger: defect if opponent ever defected
+      return history.some((m) => m.opponent === 'D') ? 'D' : 'C';
     },
   },
 
@@ -295,16 +289,17 @@ export const STRATEGIES: StrategyMap = {
     getMove: (history: RoundHistory[]) => {
       if (history.length === 0) return 'C';
 
-      // Start with Tit for Tat
-      // But weight recent history more heavily
-      const windowSize = Math.min(10, history.length);
-      const recentHistory = history.slice(-windowSize);
+      const lastMove = history[history.length - 1].opponent;
 
-      const opponentCoops = recentHistory.filter(h => h.opponent === 'C').length;
-      const cooperationRate = opponentCoops / recentHistory.length;
+      // Always defect after opponent defects
+      if (lastMove === 'D') return 'D';
 
-      // Mirror opponent's cooperation rate with slight optimism
-      return Math.random() < cooperationRate + 0.1 ? 'C' : 'D';
+      // If opponent cooperated, gradually decrease cooperation probability
+      // Start at 1.0, decrease to 0.5 by round 200
+      const round = history.length + 1;
+      const cooperationProbability = Math.max(0.5, 1.0 - (0.5 * round / 200));
+
+      return Math.random() < cooperationProbability ? 'C' : 'D';
     },
   },
 
@@ -315,14 +310,15 @@ export const STRATEGIES: StrategyMap = {
     getMove: (history: RoundHistory[]) => {
       if (history.length === 0) return 'C';
 
-      // Play Tit for Tat, but cooperate only 90% of the time
+      // Play Tit for Tat, but occasionally defect when should cooperate
       const tftMove = history[history.length - 1].opponent;
 
       if (tftMove === 'C') {
-        return 'C';
+        // TFT would cooperate, but Joss defects 10% of the time
+        return Math.random() < 0.9 ? 'C' : 'D';
       } else {
-        // Should defect, but cooperate 10% of the time instead
-        return Math.random() < 0.9 ? 'D' : 'C';
+        // TFT would defect, so Joss always defects
+        return 'D';
       }
     },
   },
