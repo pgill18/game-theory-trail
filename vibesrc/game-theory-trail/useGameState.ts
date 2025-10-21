@@ -220,11 +220,16 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       updatedNpcLeaderboard[opponentStrategyName] =
         (updatedNpcLeaderboard[opponentStrategyName] || 0) + state.opponentScore;
 
+      // Add NPC encounter scores to leaderboard (but never to player's strategy)
       newNPCEncounters.forEach((encounter) => {
-        updatedNpcLeaderboard[encounter.npc1] =
-          (updatedNpcLeaderboard[encounter.npc1] || 0) + encounter.npc1Score;
-        updatedNpcLeaderboard[encounter.npc2] =
-          (updatedNpcLeaderboard[encounter.npc2] || 0) + encounter.npc2Score;
+        if (encounter.npc1 !== userStrategyName) {
+          updatedNpcLeaderboard[encounter.npc1] =
+            (updatedNpcLeaderboard[encounter.npc1] || 0) + encounter.npc1Score;
+        }
+        if (encounter.npc2 !== userStrategyName) {
+          updatedNpcLeaderboard[encounter.npc2] =
+            (updatedNpcLeaderboard[encounter.npc2] || 0) + encounter.npc2Score;
+        }
       });
 
       // Update global encounters
