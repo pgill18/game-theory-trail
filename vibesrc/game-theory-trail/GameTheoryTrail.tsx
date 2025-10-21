@@ -32,12 +32,11 @@ const GameTheoryTrail: React.FC = () => {
       dispatch({ type: 'SET_AUTO_PLAYING', payload: playing }),
   });
 
-  // Auto-play when opening completed platform with auto-play enabled
+  // Auto-play when opening any platform with auto-play enabled
   useEffect(() => {
     if (
       state.showGameModal &&
       state.currentPlatformIndex !== null &&
-      state.completedPlatforms.includes(state.currentPlatformIndex) &&
       state.autoPlayEnabled &&
       !state.autoPlaying
     ) {
@@ -46,7 +45,6 @@ const GameTheoryTrail: React.FC = () => {
   }, [
     state.showGameModal,
     state.currentPlatformIndex,
-    state.completedPlatforms,
     state.autoPlayEnabled,
     state.autoPlaying,
     autoPlay,
@@ -135,8 +133,7 @@ const GameTheoryTrail: React.FC = () => {
 
         {/* Game Modal */}
         {state.showGameModal &&
-          state.currentPlatformIndex !== null &&
-          !state.autoPlayEnabled && (
+          state.currentPlatformIndex !== null && (
             <GameModal
               platformIndex={state.currentPlatformIndex}
               opponentStrategy={state.platforms[state.currentPlatformIndex]}
