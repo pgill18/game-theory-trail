@@ -261,6 +261,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         phase: newPhase,
         personalLeaderboard: newPersonalLeaderboard,
         showGameModal: false,
+        currentPlatformIndex: null, // Reset to prevent autoplay loop
       };
     }
 

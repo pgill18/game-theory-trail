@@ -37,7 +37,8 @@ const GameTheoryTrail: React.FC = () => {
     if (
       state.currentPlatformIndex !== null &&
       state.autoPlayEnabled &&
-      !state.autoPlaying
+      !state.autoPlaying &&
+      state.history.length === 0 // Only run for fresh platforms
     ) {
       const runAutoPlay = async () => {
         await autoPlay();
@@ -50,6 +51,7 @@ const GameTheoryTrail: React.FC = () => {
     state.currentPlatformIndex,
     state.autoPlayEnabled,
     state.autoPlaying,
+    state.history.length,
     autoPlay,
     dispatch,
   ]);
