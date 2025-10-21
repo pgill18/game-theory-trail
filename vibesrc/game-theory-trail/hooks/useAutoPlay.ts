@@ -21,6 +21,7 @@ interface UseAutoPlayParams {
     };
   }) => void;
   onSetAutoPlaying: (playing: boolean) => void;
+  delay?: number; // Delay in ms between rounds (default 300, use 0 for instant)
 }
 
 export function useAutoPlay({
@@ -31,6 +32,7 @@ export function useAutoPlay({
   opponentScore,
   onUpdateState,
   onSetAutoPlaying,
+  delay = 300,
 }: UseAutoPlayParams) {
   const autoPlay = useCallback(async () => {
     if (!playerStrategy) return;
@@ -41,7 +43,9 @@ export function useAutoPlay({
     let currentOpponentScore = opponentScore;
 
     for (let i = history.length; i < MAX_ROUNDS; i++) {
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      if (delay > 0) {
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
 
       const playerStrategyFunc = STRATEGIES[playerStrategy];
       const playerMove = playerStrategyFunc.getMove(currentHistory);
@@ -73,6 +77,7 @@ export function useAutoPlay({
     opponentScore,
     onUpdateState,
     onSetAutoPlaying,
+    delay,
   ]);
 
   return { autoPlay };

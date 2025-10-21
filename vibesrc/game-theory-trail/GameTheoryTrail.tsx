@@ -30,6 +30,7 @@ const GameTheoryTrail: React.FC = () => {
       dispatch({ type: 'UPDATE_AUTO_PLAY_STATE', payload: updates }),
     onSetAutoPlaying: (playing) =>
       dispatch({ type: 'SET_AUTO_PLAYING', payload: playing }),
+    delay: state.autoPlayEnabled ? 0 : 300, // Instant in background, animated in modal
   });
 
   // Auto-play when opening any platform with auto-play enabled
