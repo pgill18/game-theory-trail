@@ -28,7 +28,7 @@ export const EncounterDetailModal: React.FC<EncounterDetailModalProps> = ({
       aria-labelledby="encounter-modal-title"
     >
       <ScaleIn>
-        <div className="bg-gradient-to-br from-slate-900 via-green-900 to-emerald-900 rounded-lg border border-white/20 max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+        <div className="bg-gradient-to-br from-slate-900 via-green-900 to-emerald-900 rounded-lg border border-white/20 max-w-5xl w-full max-h-[80vh] overflow-hidden flex flex-col">
         <div className="p-6 border-b border-white/20">
           <div className="flex justify-between items-center">
             <div>
