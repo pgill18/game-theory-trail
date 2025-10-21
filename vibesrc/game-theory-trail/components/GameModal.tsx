@@ -73,7 +73,7 @@ export const GameModal: React.FC<GameModalProps> = ({
       aria-labelledby="game-modal-title"
     >
       <ScaleIn>
-        <div className="bg-gradient-to-br from-slate-900 via-green-900 to-emerald-900 rounded-lg border border-white/20 max-w-lg w-full">
+        <div className="bg-gradient-to-br from-slate-900 via-green-900 to-emerald-900 rounded-lg border border-white/20 max-w-2xl w-full">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
             <div>
