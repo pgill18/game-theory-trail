@@ -1,49 +1,47 @@
 import { PlatformPosition, Move } from './types';
-import { SVG_CONFIG } from './constants';
 
 /**
  * Generate platform positions along an S-curve trail
- * with no overlaps and minimum gaps between platforms
+ * Positions are calculated to match the visual trail path
  */
 export function generatePlatformPositions(count: number): PlatformPosition[] {
   const positions: PlatformPosition[] = [];
-  const { width, height, baseRadius, minGap, startY } = SVG_CONFIG;
 
-  let currentY = startY;
+  // Define key points along the trail path (bottom to top)
+  // These match the bezier curve in TrailSVG
+  const pathPoints = [
+    { x: 50, y: 95 },   // Bottom (start)
+    { x: 62, y: 80 },   // Curve right
+    { x: 67, y: 60 },   // Peak right
+    { x: 67, y: 50 },   // Middle right
+    { x: 64, y: 40 },   // Curve back
+    { x: 52, y: 37 },   // Middle center
+    { x: 40, y: 35 },   // Curve left
+    { x: 34, y: 27 },   // Upper left
+    { x: 30, y: 13 },   // Near top
+    { x: 30, y: 5 },    // Top
+  ];
 
   for (let i = 0; i < count; i++) {
-    // Calculate scale and radius for current platform
+    // Calculate scale (larger at bottom, smaller at top)
     const scale = 1.2 - (i * 0.8) / (count - 1);
-    const radius = baseRadius * scale;
 
-    // Calculate x position using S-curve (reversed, moderate curve)
+    // Calculate progress along the path (0 = bottom, 1 = top)
     const progress = i / (count - 1);
-    const x = 50 - 35 * Math.sin(progress * Math.PI * 2 - Math.PI / 2);
 
-    // Calculate y position
-    let y = currentY;
+    // Interpolate position along the path points
+    const pathIndex = progress * (pathPoints.length - 1);
+    const lowerIndex = Math.floor(pathIndex);
+    const upperIndex = Math.min(lowerIndex + 1, pathPoints.length - 1);
+    const t = pathIndex - lowerIndex;
 
-    // If not first platform, ensure no overlap with previous platform
-    if (i > 0) {
-      const prevPlatform = positions[i - 1];
-      const prevRadius = baseRadius * prevPlatform.scale;
+    const lower = pathPoints[lowerIndex];
+    const upper = pathPoints[upperIndex];
 
-      // Calculate minimum distance needed (in pixels)
-      const minDistancePx = radius + prevRadius + minGap;
+    // Linear interpolation between path points
+    const x = lower.x + (upper.x - lower.x) * t;
+    const y = lower.y + (upper.y - lower.y) * t;
 
-      // Calculate actual distance between current and previous
-      const dx = ((x - prevPlatform.x) * width) / 100; // Convert % to px
-      const dy = ((prevPlatform.y - y) * height) / 100; // Convert % to px
-      const actualDistance = Math.sqrt(dx * dx + dy * dy);
-
-      // If too close, push this platform up more
-      if (actualDistance < minDistancePx) {
-        const neededDy = Math.sqrt(minDistancePx * minDistancePx - dx * dx);
-        y = prevPlatform.y - (neededDy * 100) / height; // Convert px back to %
-      }
-    }
-
-    currentY = y;
     positions.push({ x, y, scale });
   }
 
