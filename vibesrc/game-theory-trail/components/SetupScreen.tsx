@@ -40,7 +40,7 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({
             <option value={20}>20</option>
             <option value={25}>25</option>
           </select>{' '}
-          platforms, each platform has 10 rounds of prisoner's dilemma
+          platforms, each platform has 200 rounds of prisoner's dilemma (matching Axelrod's tournament)
         </p>
       </div>
 

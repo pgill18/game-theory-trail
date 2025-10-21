@@ -1,10 +1,10 @@
 import { PayoffMatrix, StrategyMap, RoundHistory } from './types';
 
 // Version tracking - Axelrod's First Tournament Edition
-export const VERSION = '3.0.0';
+export const VERSION = '3.0.1';
 
-// Game configuration
-export const MAX_ROUNDS = 10;
+// Game configuration - matching Axelrod's original tournament
+export const MAX_ROUNDS = 200;
 
 // Payoff matrix for prisoner's dilemma
 export const PAYOFF_MATRIX: PayoffMatrix = {
