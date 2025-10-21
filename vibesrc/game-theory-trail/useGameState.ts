@@ -236,8 +236,13 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       console.log('New LB for', userStrategyName + ':', updatedNpcLeaderboard[userStrategyName]);
       console.log('Opponent:', opponentStrategyName, 'adding:', state.opponentScore);
 
-      updatedNpcLeaderboard[opponentStrategyName] =
-        (updatedNpcLeaderboard[opponentStrategyName] || 0) + state.opponentScore;
+      // Only add opponent score if opponent is NOT the player's strategy
+      if (opponentStrategyName !== userStrategyName) {
+        updatedNpcLeaderboard[opponentStrategyName] =
+          (updatedNpcLeaderboard[opponentStrategyName] || 0) + state.opponentScore;
+      } else {
+        console.log('SKIPPING opponent score - same as player strategy!');
+      }
 
       // Add NPC encounter scores to leaderboard (but never to player's strategy)
       console.log('=== ADDING NPC ENCOUNTER SCORES TO LB ===');
