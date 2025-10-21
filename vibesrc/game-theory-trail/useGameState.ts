@@ -204,12 +204,13 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         newCompletedPlatforms.length
       );
 
-      // Generate balanced NPC encounters
+      // Generate balanced NPC encounters (excluding player's strategy)
       const strategyKeys = Object.keys(STRATEGIES) as StrategyKey[];
       const newNPCEncounters = generateBalancedNPCEncounters(
         encounterCounts,
         newCompletedPlatforms.length,
-        strategyKeys
+        strategyKeys,
+        userStrategyName // Exclude player's strategy from NPC encounters
       );
 
       // Update NPC leaderboard

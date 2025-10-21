@@ -145,14 +145,15 @@ export function determineOutcome(
 export function generateBalancedNPCEncounters(
   encounterCounts: Record<string, number>,
   targetEncounters: number,
-  strategyKeys: StrategyKey[]
+  strategyKeys: StrategyKey[],
+  excludeStrategyName?: string // Exclude player's strategy from NPC encounters
 ): NPCEncounter[] {
   const newEncounters: NPCEncounter[] = [];
   const usedPairs = new Set<string>();
 
-  // Get list of NPCs that need more encounters
+  // Get list of NPCs that need more encounters (excluding player's strategy)
   let npcsThatNeed = Object.entries(encounterCounts)
-    .filter(([_, count]) => count < targetEncounters)
+    .filter(([name, count]) => count < targetEncounters && name !== excludeStrategyName)
     .map(([name]) => name);
 
   while (npcsThatNeed.length > 0) {
@@ -169,9 +170,9 @@ export function generateBalancedNPCEncounters(
         const candidates = npcsThatNeed.filter((name) => name !== npc1Name);
         npc2Name = candidates[Math.floor(Math.random() * candidates.length)];
       } else {
-        // Pair with any other NPC
+        // Pair with any other NPC (excluding player's strategy)
         const allNames = Object.keys(encounterCounts);
-        const others = allNames.filter((name) => name !== npc1Name);
+        const others = allNames.filter((name) => name !== npc1Name && name !== excludeStrategyName);
         npc2Name = others[Math.floor(Math.random() * others.length)];
       }
 
@@ -200,9 +201,9 @@ export function generateBalancedNPCEncounters(
       encounterCounts[npc2Name]++;
     }
 
-    // Recalculate NPCs that still need encounters
+    // Recalculate NPCs that still need encounters (excluding player's strategy)
     npcsThatNeed = Object.entries(encounterCounts)
-      .filter(([_, count]) => count < targetEncounters)
+      .filter(([name, count]) => count < targetEncounters && name !== excludeStrategyName)
       .map(([name]) => name);
   }
 
