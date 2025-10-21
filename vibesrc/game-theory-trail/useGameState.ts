@@ -206,6 +206,11 @@ function gameReducer(state: GameState, action: GameAction): GameState {
 
       // Generate balanced NPC encounters (excluding player's strategy)
       const strategyKeys = Object.keys(STRATEGIES) as StrategyKey[];
+      console.log('=== BEFORE NPC ENCOUNTER GENERATION ===');
+      console.log('Player Strategy:', userStrategyName);
+      console.log('Encounter Counts:', encounterCounts);
+      console.log('Target Encounters:', newCompletedPlatforms.length);
+
       const newNPCEncounters = generateBalancedNPCEncounters(
         encounterCounts,
         newCompletedPlatforms.length,
@@ -213,24 +218,48 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         userStrategyName // Exclude player's strategy from NPC encounters
       );
 
+      console.log('=== GENERATED NPC ENCOUNTERS ===');
+      console.log('Count:', newNPCEncounters.length);
+      newNPCEncounters.forEach((enc, idx) => {
+        console.log(`Encounter ${idx + 1}:`, enc.npc1, 'vs', enc.npc2, '|', enc.npc1Score, 'vs', enc.npc2Score);
+      });
+
       // Update NPC leaderboard
       const updatedNpcLeaderboard = { ...state.npcLeaderboard };
+      console.log('=== UPDATING LEADERBOARD ===');
+      console.log('Previous LB for', userStrategyName + ':', updatedNpcLeaderboard[userStrategyName] || 0);
+      console.log('Adding player score:', state.playerScore);
+
       updatedNpcLeaderboard[userStrategyName] =
         (updatedNpcLeaderboard[userStrategyName] || 0) + state.playerScore;
+
+      console.log('New LB for', userStrategyName + ':', updatedNpcLeaderboard[userStrategyName]);
+      console.log('Opponent:', opponentStrategyName, 'adding:', state.opponentScore);
+
       updatedNpcLeaderboard[opponentStrategyName] =
         (updatedNpcLeaderboard[opponentStrategyName] || 0) + state.opponentScore;
 
       // Add NPC encounter scores to leaderboard (but never to player's strategy)
-      newNPCEncounters.forEach((encounter) => {
+      console.log('=== ADDING NPC ENCOUNTER SCORES TO LB ===');
+      newNPCEncounters.forEach((encounter, idx) => {
+        console.log(`Encounter ${idx + 1}:`);
         if (encounter.npc1 !== userStrategyName) {
+          console.log('  Adding', encounter.npc1Score, 'to', encounter.npc1);
           updatedNpcLeaderboard[encounter.npc1] =
             (updatedNpcLeaderboard[encounter.npc1] || 0) + encounter.npc1Score;
+        } else {
+          console.log('  SKIPPING', encounter.npc1, '(player strategy) - would add', encounter.npc1Score);
         }
         if (encounter.npc2 !== userStrategyName) {
+          console.log('  Adding', encounter.npc2Score, 'to', encounter.npc2);
           updatedNpcLeaderboard[encounter.npc2] =
             (updatedNpcLeaderboard[encounter.npc2] || 0) + encounter.npc2Score;
+        } else {
+          console.log('  SKIPPING', encounter.npc2, '(player strategy) - would add', encounter.npc2Score);
         }
       });
+
+      console.log('=== FINAL LEADERBOARD FOR', userStrategyName + ':', updatedNpcLeaderboard[userStrategyName], '===');
 
       // Update global encounters
       const newGlobalEncounters: GlobalEncounter[] = [
@@ -256,6 +285,13 @@ function gameReducer(state: GameState, action: GameAction): GameState {
           .sort((a, b) => b.score - a.score)
           .map((entry, idx) => ({ ...entry, rank: idx + 1 }));
       }
+
+      console.log('=== PLATFORM COMPLETE SUMMARY ===');
+      console.log('Platform:', state.currentPlatformIndex + 1);
+      console.log('Total Score Earned This Game:', newTotalScore);
+      console.log('Strategy Leaderboard for', userStrategyName + ':', updatedNpcLeaderboard[userStrategyName]);
+      console.log('Discrepancy:', updatedNpcLeaderboard[userStrategyName] - newTotalScore);
+      console.log('===============================');
 
       return {
         ...state,
