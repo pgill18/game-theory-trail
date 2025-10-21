@@ -86,7 +86,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         opponentScore: 0,
         lastRoundResult: null,
         modalState: 'playing',
-        showGameModal: true,
+        showGameModal: !state.autoPlayEnabled, // Only show modal if autoplay is disabled
       };
     }
 
