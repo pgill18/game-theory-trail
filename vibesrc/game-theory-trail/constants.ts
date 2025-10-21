@@ -1,5 +1,8 @@
 import { PayoffMatrix, StrategyMap, RoundHistory } from './types';
 
+// Version tracking
+export const VERSION = '2.0.1';
+
 // Game configuration
 export const MAX_ROUNDS = 10;
 

@@ -7,7 +7,7 @@ import {
   GlobalEncounter,
   UserEncounter,
 } from './types';
-import { STRATEGIES } from './constants';
+import { STRATEGIES, VERSION } from './constants';
 import { getTimestamp } from './utils';
 import {
   playRound,
@@ -55,10 +55,19 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     case 'START_TRAIL': {
       if (!state.playerStrategy) return state;
 
-      // Generate platforms
-      const strategyKeys = Object.keys(STRATEGIES) as StrategyKey[];
+      console.log('🎮 GAME VERSION:', VERSION);
+      console.log('Player Strategy:', state.playerStrategy);
+
+      // Generate platforms (exclude player's strategy from opponents)
+      const allStrategyKeys = Object.keys(STRATEGIES) as StrategyKey[];
+      const availableOpponents = allStrategyKeys.filter(
+        (key) => key !== state.playerStrategy
+      );
+
+      console.log('Available opponents:', availableOpponents.length, 'strategies');
+
       const platforms = Array.from({ length: state.platformCount }, (_, i) => {
-        return strategyKeys[i % strategyKeys.length];
+        return availableOpponents[i % availableOpponents.length];
       });
 
       return {
@@ -291,7 +300,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
           .map((entry, idx) => ({ ...entry, rank: idx + 1 }));
       }
 
-      console.log('=== PLATFORM COMPLETE SUMMARY ===');
+      console.log('=== PLATFORM COMPLETE SUMMARY (v' + VERSION + ') ===');
       console.log('Platform:', state.currentPlatformIndex + 1);
       console.log('Total Score Earned This Game:', newTotalScore);
       console.log('Strategy Leaderboard for', userStrategyName + ':', updatedNpcLeaderboard[userStrategyName]);
